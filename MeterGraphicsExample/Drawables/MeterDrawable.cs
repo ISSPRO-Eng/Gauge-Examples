@@ -126,7 +126,8 @@ public class MeterDrawable : BaseDrawable, IDrawable
                     var textSize = canvas.GetStringSize(text, font, fontSize);
 
                     // Draw the string with the calculated width and height
-                    canvas.DrawString(text, stringPoint.X, stringPoint.Y, textSize.Width, textSize.Height, HorizontalAlignment.Center, VerticalAlignment.Center);
+                    // canvas.DrawString(text, stringPoint.X, stringPoint.Y, textSize.Width, textSize.Height, HorizontalAlignment.Center, VerticalAlignment.Center);
+                    canvas.DrawString(text, stringPoint.X, stringPoint.Y, HorizontalAlignment.Center);
                     Console.WriteLine($"Text Width: X = {textSize.Width}, Y = {textSize.Height}");
                     Console.WriteLine($"String Position: X = {stringPoint.X}, Y = {stringPoint.Y}");
 
