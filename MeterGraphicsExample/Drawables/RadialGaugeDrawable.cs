@@ -1,4 +1,10 @@
-﻿
+﻿#if ANDROID
+using Android.Graphics.Fonts;
+using static Android.Webkit.WebSettings;
+#endif
+using Microsoft.Maui;
+using static System.Net.Mime.MediaTypeNames;
+
 namespace MeterGraphicsExample.Drawables;
 
 public class RadialGaugeDrawable : BaseDrawable, IDrawable
@@ -47,6 +53,12 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         else
             canvas.FillColor = Colors.Green;
 
+        if (FillValue > MaxValue)
+            FillValue = MaxValue;
+
+        if (FillValue < 0)
+            FillValue = 0;
+
         DrawNumDisplay(canvas, circleCenter);
 
         // This is the best way to do remove the bottom side of the gauge
@@ -83,16 +95,6 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
         _emptyAngle = GetAngleDegrees(top, bottomLeft, bottomRight);
         _removeCirclePercentage = (180 - (_emptyAngle / 2)) / 360;
-
-
-        
-
-
-        if (FillValue > MaxValue)
-            FillValue = MaxValue;
-
-        if (FillValue < 0)
-            FillValue = 0;
 
         DrawNeedle(canvas, dirtyRect, FillValue);
         DrawTickMarks(canvas, dirtyRect, Steps);
@@ -172,13 +174,21 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
     private void DrawNumDisplay(ICanvas canvas, PointF centerPoint)
     {
+        var fontSize = 35;  // Replace with your desired font size
+        var font = Microsoft.Maui.Graphics.Font.DefaultBold;
         var fillString = FillValue.ToString();
-
         var textLoc = centerPoint.Offset(0, 50);
+        var textSize = canvas.GetStringSize(fillString, font, fontSize);
+
         canvas.FontSize = 25;
+#if IOS
+        canvas.DrawString(fillString, textLoc.X, textLoc.Y, textSize.Width, textSize.Height, HorizontalAlignment.Left, VerticalAlignment.Top);
+        Console.WriteLine($"Text Position: X = {textLoc.X}, Y = {textLoc.Y}");
+#elif ANDROID
         canvas.DrawString(fillString, textLoc.X, textLoc.Y, HorizontalAlignment.Center);
+#endif
     }
-    
+
     //A method to determine the angle of 2 vectors, P1 -> P2, and P1 -> P3
     private double GetAngleDegrees(PointF p1, PointF p2, PointF p3)
     {

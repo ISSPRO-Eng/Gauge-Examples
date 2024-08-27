@@ -31,7 +31,7 @@ public class MeterDrawable : BaseDrawable, IDrawable
 
         // It doesn't seem to respect this, but putting it here anyways
         //  I just drew in the order I wanted to make sure the tick marks were on top of the fill area
-        canvas.BlendMode = BlendMode.DestinationAtop;
+        canvas.BlendMode = BlendMode.Overlay;
 
 
         var height = dirtyRect.Height; 
@@ -126,8 +126,11 @@ public class MeterDrawable : BaseDrawable, IDrawable
                     var textSize = canvas.GetStringSize(text, font, fontSize);
 
                     // Draw the string with the calculated width and height
-                    // canvas.DrawString(text, stringPoint.X, stringPoint.Y, textSize.Width, textSize.Height, HorizontalAlignment.Center, VerticalAlignment.Center);
+#if IOS
+                    canvas.DrawString(text, stringPoint.X, stringPoint.Y, textSize.Width, textSize.Height, HorizontalAlignment.Left, VerticalAlignment.Top);
+#elif ANDROID
                     canvas.DrawString(text, stringPoint.X, stringPoint.Y, HorizontalAlignment.Center);
+#endif
                     Console.WriteLine($"Text Width: X = {textSize.Width}, Y = {textSize.Height}");
                     Console.WriteLine($"String Position: X = {stringPoint.X}, Y = {stringPoint.Y}");
 
