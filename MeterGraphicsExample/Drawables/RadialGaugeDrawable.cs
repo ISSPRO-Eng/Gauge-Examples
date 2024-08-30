@@ -174,19 +174,29 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
     private void DrawNumDisplay(ICanvas canvas, PointF centerPoint)
     {
-        var fontSize = 35;  // Replace with your desired font size
+        var fontSize = canvas.FontSize = 25;
         var font = Microsoft.Maui.Graphics.Font.DefaultBold;
         var fillString = FillValue.ToString();
-        var textLoc = centerPoint.Offset(0, 50);
+        var textLoc = centerPoint.Offset(0, 70);
         var textSize = canvas.GetStringSize(fillString, font, fontSize);
 
-        canvas.FontSize = 25;
-#if IOS
-        canvas.DrawString(fillString, textLoc.X, textLoc.Y, textSize.Width, textSize.Height, HorizontalAlignment.Left, VerticalAlignment.Top);
+        // Define the size of the rectangle you want to draw
+        var rectWidth = textSize.Width + 40; // Add some padding if needed
+        var rectHeight = textSize.Height + 15;
+
+        // Calculate the top-left corner of the rectangle so the rectangle is centered at `textLoc`
+        var rectX = textLoc.X - rectWidth / 2;
+        var rectY = textLoc.Y - rectHeight / 2;
+
+        // Create the rectangle centered at `textLoc`
+        RectF rectangle = new(rectX, rectY, rectWidth, rectHeight);
+
+        // Draw the rectangle
+        canvas.DrawRectangle(rectangle);
+        Console.WriteLine($"Rect Position: X = {rectX}, Y = {rectY}");
+        canvas.DrawString(fillString, rectX, rectY, rectWidth, rectHeight, HorizontalAlignment.Center, VerticalAlignment.Center);
         Console.WriteLine($"Text Position: X = {textLoc.X}, Y = {textLoc.Y}");
-#elif ANDROID
-        canvas.DrawString(fillString, textLoc.X, textLoc.Y, HorizontalAlignment.Center);
-#endif
+
     }
 
     //A method to determine the angle of 2 vectors, P1 -> P2, and P1 -> P3
